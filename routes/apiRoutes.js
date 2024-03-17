@@ -13,5 +13,7 @@ router.get("/getAllReliefCampaigns", apiController.getAllReliefCampaigns)
 
 router.get("/getReliefCampaignById/:id", apiController.getReliefCampaignById)
 
+router.get("/trackTransaction/:txId", apiController.trackTransaction)
+
 
 module.exports = router

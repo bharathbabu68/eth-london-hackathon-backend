@@ -148,5 +148,34 @@ const claimFunds = async (req, res) => {
 };
 
 
+const trackTransaction = async (req, res) => {
 
-module.exports = {verifyProof, createReliefCampaign, getAllReliefCampaigns, getReliefCampaignById, claimFunds}
+
+    try {
+
+        const circleDeveloperSdk = initiateDeveloperControlledWalletsClient({
+            apiKey: process.env.CIRCLE_API_KEY,
+            entitySecret: process.env.ENTITY_SECRET // Make sure to enter the entity secret from the step above.
+          });
+    
+    
+        const response = await circleDeveloperSdk.getTransaction({ 
+            id: req.params.txId
+          });
+
+          res.status(200).send(response.data)
+
+    }
+
+    catch(err) {
+        console.error("Error processing request:", err);
+        // Send error response if necessary
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+
+    }
+
+}
+
+
+
+module.exports = {verifyProof, createReliefCampaign, getAllReliefCampaigns, getReliefCampaignById, claimFunds, trackTransaction}
