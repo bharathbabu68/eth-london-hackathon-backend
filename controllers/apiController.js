@@ -73,4 +73,29 @@ const createReliefCampaign = async (req, res) => {
     res.status(200).send("Relief Campaign created successfully")
 }
 
-module.exports = {verifyProof, createReliefCampaign}
+
+const getAllReliefCampaigns = async (req, res) => {
+    try {
+        const allReliefCampaigns = await ReliefCampaign.find({})
+        res.send(allReliefCampaigns)
+    }
+    catch (err) {
+        console.log(err)
+        res.send("Error getting campaigns")
+    }
+}
+
+const getReliefCampaignById = async (req, res) => {
+    try {
+        const allReliefCampaigns = await ReliefCampaign.find({_id: req.params.id})
+        res.send(allReliefCampaigns)
+    }
+    catch (err) {
+        console.log(err)
+        res.send("Error getting campaign")
+
+    }
+}
+
+
+module.exports = {verifyProof, createReliefCampaign, getAllReliefCampaigns, getReliefCampaignById}

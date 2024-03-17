@@ -7,4 +7,8 @@ router.post("/verifyProof", apiController.verifyProof)
 
 router.post("/createReliefCampaign", apiController.createReliefCampaign)
 
+router.get("/getAllReliefCampaigns", apiController.getAllReliefCampaigns)
+
+router.get("/getReliefCampaignById/:id", apiController.getReliefCampaignById)
+
 module.exports = router
