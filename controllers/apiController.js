@@ -1,6 +1,7 @@
 require("dotenv").config()
 const ReliefCampaign = require("../models/reliefCampaign")
 const { initiateDeveloperControlledWalletsClient } = require('@circle-fin/developer-controlled-wallets');
+const uploadText = require('@lighthouse-web3/sdk')
 
 const verifyProof = async (req, res) => {
 
@@ -97,5 +98,55 @@ const getReliefCampaignById = async (req, res) => {
     }
 }
 
+const claimFunds = async (req, res) => {
+    try {
+        const title = req.body.campaignTitle;
+        const desc = req.body.campaignDescription;
+        const fundDispensePerIndividual = req.body.fundDispensePerIndividual
+        const campaignId = req.body.campaignId;
+        const name = req.body.name;
+        const email = req.body.email;
+        const phone = req.body.phone;
+        const address = req.body.address;
+        const walletAddress = req.body.walletAddress;
+        const walletId = req.body.walletId
+        const currentFundBalance = req.body.currentFundBalance
 
-module.exports = {verifyProof, createReliefCampaign, getAllReliefCampaigns, getReliefCampaignById}
+        const circleDeveloperSdk = initiateDeveloperControlledWalletsClient({
+            apiKey: process.env.CIRCLE_API_KEY,
+            entitySecret: process.env.ENTITY_SECRET // Make sure to enter the entity secret from the step above.
+          });
+    
+
+        const response = await circleDeveloperSdk.createTransaction({
+            walletId: walletId,
+            tokenId: '7adb2b7d-c9cd-5164-b2d4-b73b088274dc',
+            destinationAddress: walletAddress,
+            amounts: [fundDispensePerIndividual],
+            fee: {
+              type: 'level',
+              config: {
+                feeLevel: 'MEDIUM'
+              }
+            }
+          });
+
+        console.log(response.data)    
+
+        
+          const newBalance = Number(currentFundBalance)- Number(fundDispensePerIndividual)
+
+        await ReliefCampaign.updateOne({_id: req.body.campaignId}, {currentFundBalance: newBalance})
+
+        // Example of sending a response
+        res.status(200).send(response.data)
+    } catch (err) {
+        console.error("Error processing request:", err);
+        // Send error response if necessary
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+};
+
+
+
+module.exports = {verifyProof, createReliefCampaign, getAllReliefCampaigns, getReliefCampaignById, claimFunds}
