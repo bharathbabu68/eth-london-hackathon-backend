@@ -1,4 +1,5 @@
 require("dotenv").config()
+const ReliefCampaign = require("../models/reliefCampaign")
 
 const verifyProof = async (req, res) => {
 
@@ -40,4 +41,18 @@ const verifyProof = async (req, res) => {
 
 }
 
-module.exports = {verifyProof}
+const createReliefCampaign = async (req, res) => {
+    const newReliefCampaign = new ReliefCampaign({
+        campaignTitle: req.body.campaignTitle,
+        campaignDescription: req.body.campaignDescription,
+        allocatedFundAmount: req.body.allocatedFundAmount,
+        fundDispensePerIndividual: req.body.fundDispensePerIndividual,
+        fundingOrganization: req.body.fundingOrganization,
+        fundingWalletAddress: req.body.fundingWalletAddress,
+        currentFundBalance: req.body.currentFundBalance
+    })
+    await newReliefCampaign.save()
+    res.send(200, "Relief Campaign created successfully")
+}
+
+module.exports = {verifyProof, createReliefCampaign}

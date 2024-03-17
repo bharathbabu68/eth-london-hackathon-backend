@@ -7,15 +7,15 @@ require("dotenv").config()
 
 
 // Mongo-DB Configs
-// const uri = process.env.MONGODB_CONNECTION_STRING
-// mongoose.connect(uri, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true
-// })
-// const connection = mongoose.connection;
-// connection.once("open", ()=>{
-//     console.log("MongoDB connection established successfully. ")
-// })
+const uri = process.env.MONGODB_CONNECTION_STRING
+mongoose.connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+const connection = mongoose.connection;
+connection.once("open", ()=>{
+    console.log("MongoDB connection established successfully. ")
+})
 
 const apiRouter = require("./routes/apiRoutes")
 
