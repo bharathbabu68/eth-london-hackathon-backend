@@ -1,5 +1,6 @@
 require("dotenv").config()
 const ReliefCampaign = require("../models/reliefCampaign")
+const { initiateDeveloperControlledWalletsClient } = require('@circle-fin/developer-controlled-wallets');
 
 const verifyProof = async (req, res) => {
 
@@ -42,17 +43,34 @@ const verifyProof = async (req, res) => {
 }
 
 const createReliefCampaign = async (req, res) => {
+
+    const circleDeveloperSdk = initiateDeveloperControlledWalletsClient({
+        apiKey: process.env.CIRCLE_API_KEY,
+        entitySecret: process.env.ENTITY_SECRET // Make sure to enter the entity secret from the step above.
+      });
+
+      const response = await circleDeveloperSdk.createWallets({
+        accountType: 'SCA',
+        blockchains: ['MATIC-MUMBAI'],
+        count: 1,
+        walletSetId: process.env.WALLET_SET_ID
+      });
+
+      const walletInfo = response.data.wallets[0]
+
+
     const newReliefCampaign = new ReliefCampaign({
         campaignTitle: req.body.campaignTitle,
         campaignDescription: req.body.campaignDescription,
         allocatedFundAmount: req.body.allocatedFundAmount,
         fundDispensePerIndividual: req.body.fundDispensePerIndividual,
         fundingOrganization: req.body.fundingOrganization,
-        fundingWalletAddress: req.body.fundingWalletAddress,
-        currentFundBalance: req.body.currentFundBalance
+        fundingWalletAddress: walletInfo.address,
+        walletId: walletInfo.id, 
+        currentFundBalance: 0
     })
     await newReliefCampaign.save()
-    res.send(200, "Relief Campaign created successfully")
+    res.status(200).send("Relief Campaign created successfully")
 }
 
 module.exports = {verifyProof, createReliefCampaign}

@@ -27,6 +27,10 @@ const reliefCampaignSchema = new Schema({
         type: String,
         required: true
     },
+    walletId: {
+        type: String,
+        required: true
+    },
     currentFundBalance: {
         type: String,
         required: true
